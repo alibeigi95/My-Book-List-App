@@ -46,9 +46,9 @@
      }
 
      static deleteBook(el) {
-        if(el.classList.contains('delete')){
-            el.parentElement.parentElement.remove();
-        }
+         if (el.classList.contains('delete')) {
+             el.parentElement.parentElement.remove();
+         }
      }
 
      static cleareFilds() {
@@ -90,9 +90,8 @@
 
 
  //Event: Remove a book
- document.querySelector('#book-list').addEventListener('click', (e)
+ document.querySelector('#book-list').addEventListener('click', (e) => {
+     e.preventDefault();
+     UI.deleteBook(e.target)
 
-     => {
-         UI.deleteBook(e.target)
-
-     });
+ });
