@@ -14,21 +14,9 @@
 
  class UI {
      static displayBooks() {
-         const StoredBooks = [{
-                 title: 'book one',
-                 author: 'jone doe',
-                 isnn: '635431'
-             },
-             {
-                 title: 'book two',
-                 author: 'jane doe two',
-                 isbn: '54252'
-             }
 
 
-
-         ];
-         const books = StoredBooks;
+         const books = Store.getBooks();
 
          books.forEach((book) => UI.addBookToList(book));
 
@@ -51,6 +39,19 @@
          }
      }
 
+     static showAlert(message, className) {
+         const div = document.createElement('div');
+         div.className = `alert alert-${className}`;
+         div.appendChild(document.createTextNode(message));
+         const container = document.querySelector('.container');
+         const form = document.querySelector('#book-form');
+         container.insertBefore(div, form);
+         //vanish in 3 seconds
+         setTimeout(() => document.querySelector('.alert').remove(), 3000);
+
+
+     }
+
      static cleareFilds() {
          document.querySelector('#title').value = '';
          document.querySelector('#author').value = '';
@@ -62,6 +63,38 @@
 
 
  //store class : handles storage
+ class Store {
+     static getBooks() {
+         let books;
+         if (localStorage.getItem('books') === null) {
+             books = [];
+
+         } else {
+             books = JSON.parse(localStorage.getItem('books'));
+         }
+         return books;
+     }
+     static addBook(book) {
+         const books = Store.getBooks();
+         books.push(book);
+         localStorage.setItem('books', JSON.stringify(books));
+
+     }
+     static removeBook(isbn) {
+         const books = Store.getBooks();
+
+         books.forEach((book, index) => {
+             if (book.isbn === isbn) {
+                 books.splice(index, 1);
+
+             }
+         });
+         localStorage.setItem('books', JSON.stringify(books));
+     }
+
+ }
+
+
 
  //Event: Display books
  document.addEventListener('DOMContentLoaded', UI.displayBooks);
@@ -75,15 +108,29 @@
      const author = document.querySelector('#author').value;
      const isbn = document.querySelector('#isbn').value;
 
-     const book = new Book(title, author, isbn);
+     if (title === '' || author === '' || isbn === '') {
+         UI.showAlert('please fill in all fields', 'danger');
+     } else {
+         const book = new Book(title, author, isbn);
 
-     // add book to ul 
+         // add book to ul 
 
-     UI.addBookToList(book);
+         UI.addBookToList(book);
 
-     //clear fields
 
-     UI.cleareFilds();
+         Store.addBook(book);
+
+         UI.showAlert('Book Added', 'success');
+
+
+         //clear fields
+
+         UI.cleareFilds();
+
+     }
+
+
+
 
 
  })
@@ -93,5 +140,10 @@
  document.querySelector('#book-list').addEventListener('click', (e) => {
      e.preventDefault();
      UI.deleteBook(e.target)
+
+     Store.removeBook(e.target.parentElement.previousElementSibling.textContent);
+
+
+     UI.showAlert('Book Removed', 'success');
 
  });
