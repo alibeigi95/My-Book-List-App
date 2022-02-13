@@ -114,7 +114,6 @@
          const book = new Book(title, author, isbn);
 
          // add book to ul 
-
          UI.addBookToList(book);
 
 
@@ -124,7 +123,6 @@
 
 
          //clear fields
-
          UI.cleareFilds();
 
      }
@@ -140,10 +138,7 @@
  document.querySelector('#book-list').addEventListener('click', (e) => {
      e.preventDefault();
      UI.deleteBook(e.target)
-
      Store.removeBook(e.target.parentElement.previousElementSibling.textContent);
-
-
      UI.showAlert('Book Removed', 'success');
 
  });
